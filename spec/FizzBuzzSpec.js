@@ -1,5 +1,4 @@
-describe("test framework", function() {
-  it("works", function() {
-    expect(2+2).toEqual(4)
-  })
+it("is Fizz when a number divides by 3", function() {
+  var sequence = makeFizzBuzzSequence()
+  expect(sequence[2]).toEqual("Fizz")
 })
