@@ -24,4 +24,12 @@ describe("makeFizzBuzzSequence()", function() {
   it("is Fizz when the number is 6", function() {
     expect(sequence[5]).toEqual("Fizz")
   })
+
+  it("is Buzz when the number is 5", function() {
+    expect(sequence[4]).toEqual("Buzz")
+  })
+
+  it("is Buzz when the number is 10", function() {
+    expect(sequence[9]).toEqual("Buzz")
+  })
 })
