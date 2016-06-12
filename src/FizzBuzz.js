@@ -2,22 +2,77 @@ var FIZZ = "Fizz"
 var BUZZ = "Buzz"
 var FIZZBUZZ = FIZZ + BUZZ
 
-function makeFizzBuzzSequence() {
-  var array = []
+function FizzBuzz(rules) {
+  this.rules = rules
 
-  for (var number = 1; number <= 100; number++) {
-    if (shouldReplaceWithFizzBuzz(number)) {
-      array.push(FIZZBUZZ)
-    } else if (shouldReplaceWithFizz(number)) {
-      array.push(FIZZ)
-    } else if (shouldReplaceWithBuzz(number)) {
-      array.push(BUZZ)
-    } else {
-      array.push(number.toString())
+  this.makeSequence = function() {
+    var array = []
+
+    for (var number = 1; number <= 100; number++) {
+      var rule = rules.find(function(rule) {
+        return rule.isApplicable(number)
+      })
+
+      array.push(rule.replacement(number))
     }
+
+    return array
+  }
+}
+
+function FizzRule() {
+  this.isApplicable = function(number) {
+    return dividesBy(3)(number) ||
+           containsDigit(3)(number)
   }
 
-  return array
+  this.replacement = function(number) {
+    return FIZZ
+  }
+}
+
+function BuzzRule() {
+  this.isApplicable = function(number) {
+    return dividesBy(5)(number) ||
+           containsDigit(5)(number)
+  }
+
+  this.replacement = function(number) {
+    return BUZZ
+  }
+}
+
+function FizzBuzzRule(fizzRule, buzzRule) {
+  this.isApplicable = function(number) {
+    return fizzRule.isApplicable(number) &&
+           buzzRule.isApplicable(number)
+  }
+
+  this.replacement = function(number) {
+    return fizzRule.replacement(number) +
+           buzzRule.replacement(number)
+  }
+}
+
+function DefaultRule() {
+  this.isApplicable = function(number) {
+    return true
+  }
+
+  this.replacement = function(number) {
+    return number.toString()
+  }
+}
+
+function makeFizzBuzzSequence() {
+  var fizzBuzz = new FizzBuzz([
+    new FizzBuzzRule(new FizzRule(), new BuzzRule()),
+    new FizzRule(),
+    new BuzzRule(),
+    new DefaultRule(),
+  ])
+
+  return fizzBuzz.makeSequence()
 }
 
 function containsDigit(digit) {
@@ -39,25 +94,4 @@ function dividesBy(divisor) {
   return function(number) {
     return number % divisor == 0
   }
-}
-
-var containsDigitThree = containsDigit(3)
-var containsDigitFive = containsDigit(5)
-
-dividesByThree = dividesBy(3)
-dividesByFive = dividesBy(5)
-
-function shouldReplaceWithFizz(number) {
-  return dividesByThree(number) ||
-         containsDigitThree(number)
-}
-
-function shouldReplaceWithBuzz(number) {
-  return dividesByFive(number) ||
-         containsDigitFive(number)
-}
-
-function shouldReplaceWithFizzBuzz(number) {
-  return shouldReplaceWithFizz(number) &&
-         shouldReplaceWithBuzz(number)
 }
